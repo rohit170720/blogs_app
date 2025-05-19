@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 
 async function getBlogs() {
-  const res = await fetch("http://localhost:3000/api/posts", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
     cache: "force-cache",
   });
   if (!res.ok) {
@@ -18,7 +18,7 @@ export default async function Home() {
 
   return (
     <main className='max-w-3xl mx-auto px-4 py-8 relative min-h-screen'>
-      <h1 className='text-3xl font-bold mb-6 text-center'>Blogs App</h1>
+      <h1 className='text-3xl font-bold mb-6 text-center'>Blogs</h1>
       <Suspense
         fallback={<div className='text-center text-gray-500'>Loading...</div>}
       >
@@ -27,7 +27,7 @@ export default async function Home() {
             {blogs.map((blog: Blog) => (
               <li
                 key={blog.$id}
-                className='bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 focus-within:ring-2 focus-within:ring-blue-500'
+                className='bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 focus-within:ring-2 focus-within:ring-blue-500 flex flex-row justify-between items-start'
                 tabIndex={0}
                 aria-label={`Blog: ${blog.blog_title}`}
               >

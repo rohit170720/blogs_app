@@ -1,7 +1,7 @@
 export type Blog = {
   blog_title: string;
   blog_desc: string;
-  blog_autor: string | null;
+  blog_author: string | null;
   blog_image: string | null;
   $id: string;
   $createdAt: string;
@@ -9,4 +9,9 @@ export type Blog = {
   $permissions: string[];
   $databaseId: string;
   $collectionId: string;
+};
+
+export type ImageFile = {
+  bucketId: string;
+  fileId: string;
 };

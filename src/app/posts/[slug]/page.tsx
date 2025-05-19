@@ -1,5 +1,6 @@
 import { Blog } from "@/lib/types";
-import { notFound } from "next/navigation";
+import Image from "next/image";
+import defaultImage from "@/asset/Blog_image.png";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -7,9 +8,12 @@ interface PageProps {
 
 async function fetchPostBySlug(slug: string): Promise<{ blog: Blog } | null> {
   try {
-    const res = await fetch(`http://localhost:3000/api/posts/${slug}`, {
-      cache: "no-store",
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${slug}`,
+      {
+        cache: "no-store",
+      }
+    );
     if (!res.ok) return null;
     return res.json();
   } catch (error) {
@@ -42,6 +46,28 @@ export default async function PostPage({ params }: PageProps) {
         <h1 className='text-3xl md:text-4xl font-extrabold mb-4 text-gray-900 break-words'>
           {post.blog.blog_title}
         </h1>
+        <p className='text-sm text-gray-500 mb-2'>
+          {post.blog.blog_author
+            ? `By ${post.blog.blog_author}`
+            : "By Anonymous"}
+        </p>
+        <p className='text-sm text-gray-500 mb-4'>
+          {new Date(post.blog.$createdAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </p>
+        <div className='mb-4'>
+          <Image
+            alt='Uploaded Image'
+            width={200}
+            height={200}
+            className='w-full h-48 object-cover rounded-lg'
+            src={defaultImage}
+          />
+        </div>
+        <h2 className='text-2xl font-bold mb-4 text-gray-800'>Description</h2>
         <div className='text-gray-700 text-base md:text-lg leading-relaxed'>
           {post.blog.blog_desc}
         </div>

@@ -12,3 +12,20 @@ export async function GET() {
   const blogs = data.documents;
   return NextResponse.json({ blogs });
 }
+
+export async function POST(request: Request) {
+  const { blog_title, blog_desc, blog_image, blog_author } =
+    await request.json();
+  const document = await databases.createDocument(
+    process.env.NEXT_PUBLIC_DATABASE_ID!,
+    process.env.NEXT_PUBLIC_BLOGS_COLLECTION_ID!,
+    "unique()",
+    {
+      blog_title,
+      blog_desc,
+      blog_author,
+      blog_image,
+    }
+  );
+  return NextResponse.json({ blog: document });
+}
