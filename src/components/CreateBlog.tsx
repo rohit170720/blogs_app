@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { getUrl, uploadImage } from "@/actions/blogActions";
+import { getUrl, postBlog, uploadImage } from "@/actions/blogActions";
 import toast from "react-hot-toast";
 
 function CreateBlog() {
@@ -62,16 +62,7 @@ function CreateBlog() {
       blog_image: imageUrl ? imageUrl : null,
     };
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/posts`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(blogData),
-      }
-    );
+    const response = await postBlog(JSON.stringify(blogData));
 
     if (!response.ok) {
       return Promise.reject(new Error("Failed to create blog"));

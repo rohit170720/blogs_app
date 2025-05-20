@@ -18,7 +18,7 @@ function BlogCard({ blog }: { blog: Blog }) {
           priority={false}
         />
       </div>
-      <div className='flex flex-col justify-between h-full'>
+      <div className='flex flex-col justify-between h-full w-full'>
         <h2 className='text-xl font-semibold text-blue-700 mb-2'>
           {createExcerpt(blog?.blog_title, 50)}
         </h2>

@@ -1,5 +1,7 @@
+"use server";
 import { ID, storage } from "@/lib/appwrite";
 import { ImageFile } from "@/lib/types";
+import { revalidateTag } from "next/cache";
 
 export const uploadImage = async (file: File) => {
   if (!file) return;
@@ -19,12 +21,45 @@ export const getUrl = async (image: ImageFile) => {
 };
 
 export async function getBlogs() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
-    cache: "force-cache",
-    next: { tags: ["blogs"] },
-  });
-  if (!res.ok) {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
+      // cache: "force-cache",
+      next: { tags: ["blogs"] },
+    });
+    if (!res.ok) {
+      return { error: "Failed to fetch blogs" };
+    }
+    return res.json();
+  } catch (err) {
+    console.log(err);
     return { error: "Failed to fetch blogs" };
   }
-  return res.json();
+}
+
+export async function postBlog(blogData: string) {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/posts`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: blogData,
+      }
+    );
+
+    const data = await response.json();
+    console.log(response, data);
+
+    if (!!response.ok) {
+      revalidateTag("blogs");
+      return { ok: true, data };
+    } else {
+      return { ok: false, message: "Failed to create blog" };
+    }
+  } catch (err) {
+    console.log(err);
+    return { ok: false, message: "Failed to create blog" };
+  }
 }

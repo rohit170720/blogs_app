@@ -1,5 +1,4 @@
 import { databases } from "@/lib/appwrite";
-import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -28,8 +27,5 @@ export async function POST(request: Request) {
       blog_image,
     }
   );
-  if (document) {
-    revalidateTag("blogs");
-  }
   return NextResponse.json({ blog: document });
 }
