@@ -14,6 +14,7 @@ export async function GET(
     );
     return NextResponse.json({ blog: document });
   } catch (_error) {
+    console.log(_error);
     return NextResponse.json({ message: "Blog not found" }, { status: 404 });
   }
 }
