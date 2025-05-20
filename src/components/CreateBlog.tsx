@@ -2,8 +2,7 @@
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { getUrl, uploadImage } from "@/actions/blogActions";
-import { ImageFile } from "@/lib/types";
-import { get } from "http";
+import toast from "react-hot-toast";
 
 function CreateBlog() {
   const imagePickerRef = useRef<HTMLInputElement>(null);
@@ -25,19 +24,26 @@ function CreateBlog() {
   };
 
   const validate = () => {
-    const newErrors: { title?: string; description?: string } = {};
-    if (!form.title.trim()) newErrors.title = "Title is required";
-    if (!form.description.trim())
+    const newErrors: { title?: string; description?: string; author?: string } =
+      {};
+    if (!form.title.trim()) {
+      newErrors.title = "Title is required";
+    } else if (form.title.length > 99) {
+      newErrors.title = "Title must not exceed 99 characters";
+    }
+    if (!form.description.trim()) {
       newErrors.description = "Description is required";
+    } else if (form.description.length > 2048) {
+      newErrors.description = "Description must not exceed 2048 characters";
+    }
+    if (form.author && form.author.length > 20) {
+      newErrors.author = "Author must not exceed 20 characters";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    // Submit logic here
-
+  const submitBlog = async () => {
     let imageUrl: string | null = null;
     if (image) {
       const fileUploaded = await uploadImage(image);
@@ -68,17 +74,25 @@ function CreateBlog() {
     );
 
     if (!response.ok) {
-      alert("Failed to create blog");
-      return;
-    }
-    const data = await response.json();
-    if (data) {
-      alert("Blog created successfully");
-      setForm({ title: "", description: "", author: "" });
-      setImage(null);
+      return Promise.reject(new Error("Failed to create blog"));
     } else {
-      alert("Failed to create blog");
+      setForm({ author: "", title: "", description: "" });
+      setImage(null);
     }
+
+    return response;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+    // Submit logic here
+
+    toast.promise(submitBlog(), {
+      loading: "Creating Blog...",
+      error: "Failed to create blog",
+      success: "Blog Published!",
+    });
   };
 
   return (

@@ -1,6 +1,7 @@
 import { Blog } from "@/lib/types";
 import Image from "next/image";
 import defaultImage from "@/asset/Blog_image.png";
+import { createExcerpt } from "@/lib/utils";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -19,6 +20,23 @@ async function fetchPostBySlug(slug: string): Promise<{ blog: Blog } | null> {
   } catch (error) {
     return null;
   }
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params;
+  const post = await fetchPostBySlug(slug);
+
+  if (!post || !post.blog) {
+    return {
+      title: "Blog Not Found",
+      description: "Sorry, the blog post you are looking for does not exist.",
+    };
+  }
+
+  return {
+    title: post.blog.blog_title,
+    description: createExcerpt(post.blog.blog_desc, 150),
+  };
 }
 
 export default async function PostPage({ params }: PageProps) {
@@ -60,11 +78,12 @@ export default async function PostPage({ params }: PageProps) {
         </p>
         <div className='mb-4'>
           <Image
-            alt='Uploaded Image'
+            alt='Blog Image'
             width={200}
             height={200}
             className='w-full h-48 object-cover rounded-lg'
             src={defaultImage}
+            priority={false}
           />
         </div>
         <h2 className='text-2xl font-bold mb-4 text-gray-800'>Description</h2>

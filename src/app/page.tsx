@@ -1,17 +1,11 @@
-import BlogCard from "@/components/BlogCard";
+import dynamic from "next/dynamic";
 import { Blog } from "@/lib/types";
 import { Suspense } from "react";
 import Link from "next/link";
+import { getBlogs } from "@/actions/blogActions";
 
-async function getBlogs() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
-    cache: "force-cache",
-  });
-  if (!res.ok) {
-    return { error: "Failed to fetch blogs" };
-  }
-  return res.json();
-}
+// Dynamically import BlogCard
+const BlogCard = dynamic(() => import("@/components/BlogCard"));
 
 export default async function Home() {
   const { blogs } = await getBlogs();
@@ -27,7 +21,7 @@ export default async function Home() {
             {blogs.map((blog: Blog) => (
               <li
                 key={blog.$id}
-                className='bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 focus-within:ring-2 focus-within:ring-blue-500 flex flex-row justify-between items-start'
+                className='bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 focus-within:ring-2 focus-within:ring-blue-500 flex flex-col sm:flex-row items-center sm:items-start gap-4'
                 tabIndex={0}
                 aria-label={`Blog: ${blog.blog_title}`}
               >

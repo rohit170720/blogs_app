@@ -8,13 +8,14 @@ import defaultImage from "@/asset/Blog_image.png";
 function BlogCard({ blog }: { blog: Blog }) {
   return (
     <>
-      <div className='h-full mr-4'>
+      <div className='h-full w-full sm:max-w-52'>
         <Image
           alt='Uploaded Image'
           width={200}
           height={200}
-          className='w-full h-48 object-cover rounded-lg'
+          className='w-full h-52 object-cover rounded-lg'
           src={defaultImage}
+          priority={false}
         />
       </div>
       <div className='flex flex-col justify-between h-full'>

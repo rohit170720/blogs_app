@@ -17,3 +17,14 @@ export const getUrl = async (image: ImageFile) => {
   const url = await storage.getFilePreview(image.bucketId, image.fileId);
   return url;
 };
+
+export async function getBlogs() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
+    cache: "force-cache",
+    next: { tags: ["blogs"] },
+  });
+  if (!res.ok) {
+    return { error: "Failed to fetch blogs" };
+  }
+  return res.json();
+}
