@@ -17,7 +17,7 @@ async function fetchPostBySlug(slug: string): Promise<{ blog: Blog } | null> {
     );
     if (!res.ok) return null;
     return res.json();
-  } catch (error) {
+  } catch (_error) {
     return null;
   }
 }

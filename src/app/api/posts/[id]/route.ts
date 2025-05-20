@@ -13,7 +13,7 @@ export async function GET(
       id
     );
     return NextResponse.json({ blog: document });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ message: "Blog not found" }, { status: 404 });
   }
 }
